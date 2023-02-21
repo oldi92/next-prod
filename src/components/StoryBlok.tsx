@@ -22,7 +22,7 @@ export function useStoryblok(originalStory: any, preview: any) {
 
       // reload on Next.js page on save or publish event in the Visual Editor
       storyblokInstance.on(["change", "published"], () =>
-        window.location.reload(true)
+        window.location.reload()
       );
 
       // live update the story on input events
