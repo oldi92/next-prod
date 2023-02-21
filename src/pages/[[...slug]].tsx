@@ -13,16 +13,33 @@ import { useRouter } from "next/router";
 // import { Storyblok, useStoryblok } from "@electro/consumersite/src/storyblok";
 // import dirtyReplaceForChargerCount from "../src/storyblok/helpers/dirtyReplaceForChargerCount";
 // import { getDatasourceEntries } from "../src/storyblok/util/storyblok";
-
+import Feature from "../components/Feature";
+import Grid from "../components/Grid";
+import Teaser from "../components/Teaser";
 import { PageLayout } from "../components/PageLayout";
 import { Storyblok, useStoryblok } from "../components/StoryBlok";
+import { storyblokInit, apiPlugin } from "@storyblok/react";
 
 interface landingPagePageProps {
   story: StoryParams;
 }
 
+const components: any = {
+  feature: Feature,
+  grid: Grid,
+  teaser: Teaser,
+  page: Page,
+};
+
+storyblokInit({
+  accessToken: "jvQr9vFaXU8HlJqAfUi2tgtt",
+  use: [apiPlugin],
+  components,
+});
+
 export default function Page({ story }: landingPagePageProps) {
   console.log("***** STORYBLOK PAGE ****** ");
+  console.log("STORY ", story);
 
   const router = useRouter();
   const enableBridge = "_storyblok" in router.query;
@@ -39,8 +56,6 @@ export async function getStaticProps({
   locale,
   defaultLocale,
 }: any) {
-  console.log(" ******* GET STATIC PROPS *******");
-
   const slug = params?.slug ? params.slug.join("/") : "home";
   const sbParams: StoryParams = {
     version: "published",
@@ -111,21 +126,8 @@ export async function getStaticPaths() {
 
     const { slug, isStartpage } = data.links[linkKey];
 
-    /**
-     * We are assuming the country code always prefixes the slug.
-     * This is because all content in Storyblok is organised into
-     * directories named after country codes.
-     * https://www.storyblok.com/docs/guide/in-depth/internationalization#folder-level-translation
-     */
-    // const [countryCodeFromSlug] = slug.split("/");
-
     const splitSlug =
       slug.includes("home") || isStartpage ? [] : slug.split("/");
-
-    // const index = splitSlug.indexOf(countryCodeFromSlug);
-    // if (index !== -1) {
-    //   splitSlug.splice(index, 1);
-    // }
 
     paths.push({ params: { slug: splitSlug } });
   });
